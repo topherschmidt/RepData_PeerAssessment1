@@ -1,30 +1,58 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
+# Reproducible Research: Peer Assessment 1
 
 
 ## Loading and preprocessing the data
 1. This code chunk will unzip the archive file and read the data from the csv file
 into the program.  This process assumes that activity.zip is located in the working directory.  
 
-```{r preprocess, echo=TRUE}
+
+```r
 unzip("./activity.zip")
 raw <- read.csv("./activity.csv")
 head(raw)
+```
 
+```
+##   steps       date interval
+## 1    NA 2012-10-01        0
+## 2    NA 2012-10-01        5
+## 3    NA 2012-10-01       10
+## 4    NA 2012-10-01       15
+## 5    NA 2012-10-01       20
+## 6    NA 2012-10-01       25
 ```
 ## What is mean total number of steps taken per day?
 1. Using the dplyr package, summarize the raw data read from file, grouping by date.
 2. Use the hist function to create a histogram of the total steps, formatting the labels and colors to improve readabilty.
 3. Calculate mean and median for step totals and print the output, using the na.rm = TRUE option to avoid missing values in the data set.
 
-```{r compute steps, echo=TRUE}
 
+```r
 library(dplyr)
+```
 
+```
+## Warning: package 'dplyr' was built under R version 3.4.2
+```
+
+```
+## 
+## Attaching package: 'dplyr'
+```
+
+```
+## The following objects are masked from 'package:stats':
+## 
+##     filter, lag
+```
+
+```
+## The following objects are masked from 'package:base':
+## 
+##     intersect, setdiff, setequal, union
+```
+
+```r
 sumraw <- raw %>% group_by(date) %>% summarize(sum(steps))
 names(sumraw) <- c("date", "totalsteps")
 
@@ -36,12 +64,26 @@ hist(sumraw$totalsteps,
      col="green",
      las=1 
      )
+```
 
+![](PA1_template_files/figure-html/compute steps-1.png)<!-- -->
+
+```r
 stepsmean <- mean(sumraw$totalsteps, na.rm = TRUE)
 print(c("Mean total steps for all days: ", stepsmean) )
+```
+
+```
+## [1] "Mean total steps for all days: " "10766.1886792453"
+```
+
+```r
 stepsmedian <- median(sumraw$totalsteps, na.rm = TRUE)
 print(c("Median total steps for all days: ", stepsmedian) )
+```
 
+```
+## [1] "Median total steps for all days: " "10765"
 ```
 
 
@@ -50,20 +92,24 @@ print(c("Median total steps for all days: ", stepsmedian) )
 2. Using the ggplot2 package, we graph a time series plot, showing the average steps per interval with a single line.
 3. The highest average number of steps is found and used to determine the interval that relates to it, answering the question, across all days, which is the interval with the highest average number of steps.  This is printed outside of the code chunk using a {r varname} reference.
 
-```{r timeseries plot, echo = TRUE}
+
+```r
 library(ggplot2)
 
 suminterval <- raw %>% group_by(interval) %>% summarize(mean(steps, na.rm = TRUE))
 names(suminterval) <- c("interval", "averagesteps")
 ggplot(suminterval, aes(interval, averagesteps)) + geom_line() + 
         xlab("Interval") + ylab("Average steps")
+```
 
+![](PA1_template_files/figure-html/timeseries plot-1.png)<!-- -->
+
+```r
 maxinterval <- suminterval %>% 
         filter(averagesteps == max(suminterval$averagesteps)) %>%
         select(interval)
-
 ```
-The interval with the most average steps over days observed is `r maxinterval`
+The interval with the most average steps over days observed is 835
 
 ## Imputing missing values
 
@@ -80,13 +126,20 @@ to fill in the missing data.
 mean and median steps values, but not enough to see a difference in the
 histogram.
 
-```{r handle missing values, echo = TRUE}
+
+```r
 #Collect all rows with missing values
 missingvals <- raw[rowSums(is.na(raw)) > 0,]
 
 print(c("Number of observations with missing values: ", nrow(missingvals)) )
+```
 
+```
+## [1] "Number of observations with missing values: "
+## [2] "2304"
+```
 
+```r
 #Append the average steps for the interval into a new data set
 withavg <- merge(raw, suminterval, by = "interval")
 
@@ -113,11 +166,26 @@ hist(sumwithavg$totalsteps,
      col="green",
      las=1 
      )
+```
 
+![](PA1_template_files/figure-html/handle missing values-1.png)<!-- -->
+
+```r
 stepsmean <- mean(sumwithavg$totalsteps, na.rm = TRUE)
 print(c("Mean total steps for all days: ", stepsmean) )
+```
+
+```
+## [1] "Mean total steps for all days: " "10765.6393442623"
+```
+
+```r
 stepsmedian <- median(sumwithavg$totalsteps, na.rm = TRUE)
 print(c("Median total steps for all days: ", stepsmedian) )
+```
+
+```
+## [1] "Median total steps for all days: " "10762"
 ```
 
 
@@ -128,9 +196,27 @@ print(c("Median total steps for all days: ", stepsmedian) )
 3. Using ggplot2 we create a time series panel plot with two panels, one each for "WEEKEND" and "WEEKDAY" data.
 4. We can see with the panel plot subjects are more active in the morning (around 8am) on the weekdays when compared with weekends.  We can also see that subject is slightly more active during the day on the weekend, probably because subject isn't working.
 
-```{r compare weekday and weekend data}
-library(lubridate)
 
+```r
+library(lubridate)
+```
+
+```
+## Warning: package 'lubridate' was built under R version 3.4.2
+```
+
+```
+## 
+## Attaching package: 'lubridate'
+```
+
+```
+## The following object is masked from 'package:base':
+## 
+##     date
+```
+
+```r
 suminterval <- mutate(withavg, dayofweek = ifelse (
                         wday(ymd(date))
                          %in% c(1,7), "WEEKEND","WEEKDAY"
@@ -144,5 +230,6 @@ ggplot(suminterval, aes(x = interval, y = averagesteps, group = dayofweek )) +  
         xlab("Interval") + 
         ylab("Average steps") + 
         facet_wrap( ~ dayofweek, nrow = 2)
-
 ```
+
+![](PA1_template_files/figure-html/compare weekday and weekend data-1.png)<!-- -->
