@@ -21,7 +21,7 @@ head(raw)
 2. Use the hist function to create a histogram of the total steps, formatting the labels and colors to improve readabilty.
 3. Calculate mean and median for step totals and print the output, using the na.rm = TRUE option to avoid missing values in the data set.
 
-```{r compute steps, echo=TRUE}
+```{r computesteps, echo=TRUE}
 
 library(dplyr)
 
@@ -50,7 +50,7 @@ print(c("Median total steps for all days: ", stepsmedian) )
 2. Using the ggplot2 package, we graph a time series plot, showing the average steps per interval with a single line.
 3. The highest average number of steps is found and used to determine the interval that relates to it, answering the question, across all days, which is the interval with the highest average number of steps.  This is printed outside of the code chunk using a {r varname} reference.
 
-```{r timeseries plot, echo = TRUE}
+```{r timeseriesplot, echo = TRUE}
 library(ggplot2)
 
 suminterval <- raw %>% group_by(interval) %>% summarize(mean(steps, na.rm = TRUE))
@@ -80,7 +80,7 @@ to fill in the missing data.
 mean and median steps values, but not enough to see a difference in the
 histogram.
 
-```{r handle missing values, echo = TRUE}
+```{r handlemissingvalues, echo = TRUE}
 #Collect all rows with missing values
 missingvals <- raw[rowSums(is.na(raw)) > 0,]
 
@@ -128,7 +128,7 @@ print(c("Median total steps for all days: ", stepsmedian) )
 3. Using ggplot2 we create a time series panel plot with two panels, one each for "WEEKEND" and "WEEKDAY" data.
 4. We can see with the panel plot subjects are more active in the morning (around 8am) on the weekdays when compared with weekends.  We can also see that subject is slightly more active during the day on the weekend, probably because subject isn't working.
 
-```{r compare weekday and weekend data}
+```{r compareweekdayandweekenddata}
 library(lubridate)
 
 suminterval <- mutate(withavg, dayofweek = ifelse (

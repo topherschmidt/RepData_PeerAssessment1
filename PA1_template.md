@@ -66,7 +66,7 @@ hist(sumraw$totalsteps,
      )
 ```
 
-![](PA1_template_files/figure-html/compute steps-1.png)<!-- -->
+![](PA1_template_files/figure-html/computesteps-1.png)<!-- -->
 
 ```r
 stepsmean <- mean(sumraw$totalsteps, na.rm = TRUE)
@@ -102,7 +102,7 @@ ggplot(suminterval, aes(interval, averagesteps)) + geom_line() +
         xlab("Interval") + ylab("Average steps")
 ```
 
-![](PA1_template_files/figure-html/timeseries plot-1.png)<!-- -->
+![](PA1_template_files/figure-html/timeseriesplot-1.png)<!-- -->
 
 ```r
 maxinterval <- suminterval %>% 
@@ -168,7 +168,7 @@ hist(sumwithavg$totalsteps,
      )
 ```
 
-![](PA1_template_files/figure-html/handle missing values-1.png)<!-- -->
+![](PA1_template_files/figure-html/handlemissingvalues-1.png)<!-- -->
 
 ```r
 stepsmean <- mean(sumwithavg$totalsteps, na.rm = TRUE)
@@ -232,4 +232,4 @@ ggplot(suminterval, aes(x = interval, y = averagesteps, group = dayofweek )) +  
         facet_wrap( ~ dayofweek, nrow = 2)
 ```
 
-![](PA1_template_files/figure-html/compare weekday and weekend data-1.png)<!-- -->
+![](PA1_template_files/figure-html/compareweekdayandweekenddata-1.png)<!-- -->
